@@ -20,12 +20,7 @@ for root, dirs, files in os.walk(fileDirJourneys):  # root = Path, dirs = folder
         if string.endswith(".avro"):
             fileList.append(string)
 fileList = sorted(fileList)
-print(fileList)
-print(len(fileList))
 
-# reader = avro.datafile.DataFileReader(open('/Users/davidritter/Documents/userwerk/CDP_Recommendation/Avro-Files/Customer Journeys/ts=1590966000000/part-0-0.avro',"rb"),avro.io.DatumReader())
-# schema = reader.meta
-# print(schema)
 
 for files in fileList:
     with open(files, 'rb') as f:
@@ -34,9 +29,10 @@ for files in fileList:
         schema_from_file = json.loads(metadata['avro.schema'])
         users = [user for user in reader]
         targetfile = "/Users/davidritter/Documents/userwerk/CDP_Recommendation/Avro-Files/transformed Avro-Files/Customer Journey/Journey_" + str(counter)
-        with open(targetfile, "w") as write_file:
-            users = str(users)
-            json.dump(users, write_file)
-            counter = counter + 1
-            print(counter)
+        if targetfile.exist() == False:
+            with open(targetfile, "w") as write_file:
+                users = str(users)
+                json.dump(users, write_file)
+                counter = counter + 1
+                print(counter)
     reader.close()
