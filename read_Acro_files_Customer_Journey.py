@@ -19,20 +19,22 @@ for root, dirs, files in os.walk(fileDirJourneys):  # root = Path, dirs = folder
         string = str(file)
         if string.endswith(".avro"):
             fileList.append(string)
+
+# Liste sortieren
 fileList = sorted(fileList)
 
-
+# Durch jedes File gehen und diese von Avro in ein Textfile schreiben
 for files in fileList:
     with open(files, 'rb') as f:
-        reader = DataFileReader(f, DatumReader())
-        metadata = copy.deepcopy(reader.meta)
-        schema_from_file = json.loads(metadata['avro.schema'])
-        users = [user for user in reader]
         targetfile = "/Users/davidritter/Documents/userwerk/CDP_Recommendation/Avro-Files/transformed Avro-Files/Customer Journey/Journey_" + str(counter)
-        if targetfile.exist() == False:
+        if os.path.exists(targetfile) == False:
+            reader = DataFileReader(f, DatumReader())
+            metadata = copy.deepcopy(reader.meta)
+            schema_from_file = json.loads(metadata['avro.schema'])
+            users = [user for user in reader]
             with open(targetfile, "w") as write_file:
                 users = str(users)
                 json.dump(users, write_file)
-                counter = counter + 1
                 print(counter)
-    reader.close()
+            reader.close()
+        counter = counter + 1
